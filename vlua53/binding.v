@@ -17,12 +17,14 @@ pub fn lua_atpanic(L &C.lua_State, panicf fn(&C.lua_State) int) voidptr {
 }
 
 [inline]
-pub fn lua_call(L &C.lua_State, nargs, nresults int) {
+pub fn lua_call(L &C.lua_State, nargs int, nresults int) {
 	C.lua_call(L, nargs, nresults)
 }
 
+/// LUA_API void  (lua_callk) (lua_State *L, int nargs, int nresults, lua_KContext ctx, lua_KFunction k);
+
 [inline]
-pub fn lua_callk(L &C.lua_State, nargs, nresults, ctx C.lua_KContext, k fn(&C.lua_State, int, C.lua_KContext) int) {
+pub fn lua_callk(L &C.lua_State, nargs int, nresults int, ctx Lua_KContext, k fn(&C.lua_State, int, Lua_KContext) int) {
 	C.lua_callk(L, nargs, nresults, ctx, k)
 }
 
@@ -227,7 +229,7 @@ pub fn lua_next(L &C.lua_State, index int) int {
 }
 
 [inline]
-pub fn lua_numbertointeger(n C.lua_Number, p &i64) int {
+pub fn lua_numbertointeger(n Lua_Number, p &i64) int {
 	return C.lua_numbertointeger(n, p)
 }
 
@@ -237,7 +239,7 @@ pub fn lua_pcall(L &C.lua_State, nargs, nresults, msgh int) int {
 }
 
 [inline]
-pub fn lua_pcallk (L &C.lua_State, nargs, nresults, msgh int, ctx C.lua_KContext, k fn(&C.lua_State, int, C.lua_KContext) int) int {
+pub fn lua_pcallk (L &C.lua_State, nargs, nresults, msgh int, ctx Lua_KContext, k fn(&C.lua_State, int, Lua_KContext) int) int {
 	return C.lua_pcallk(L, nargs, nresults, msgh, ctx, k)
 }
 
@@ -294,7 +296,7 @@ pub fn lua_pushnil(L &C.lua_State) {
 }
 
 [inline]
-pub fn lua_pushnumber(L &C.lua_State, n C.lua_Number) {
+pub fn lua_pushnumber(L &C.lua_State, n Lua_Number) {
 	C.lua_pushnumber(L, n)
 }
 
@@ -459,12 +461,12 @@ pub fn lua_tolstring(L &C.lua_State, index int, len &size_t) byteptr {
 }
 
 [inline]
-pub fn lua_tonumber(L &C.lua_State, index int) C.lua_Number {
+pub fn lua_tonumber(L &C.lua_State, index int) Lua_Number {
 	return C.lua_tonumber(L, index)
 }
 
 [inline]
-pub fn lua_tonumberx(L &C.lua_State, index int, isnum &int) C.lua_Number {
+pub fn lua_tonumberx(L &C.lua_State, index int, isnum &int) Lua_Number {
 	return C.lua_tonumberx(L, index, isnum)
 }
 
@@ -502,7 +504,7 @@ pub fn lua_typename(L &C.lua_State, tp int) byteptr {
 pub fn lua_upvalueindex(i int) int {
 	return C.lua_upvalueindex(i)
 }
-pub fn lua_version(L &C.lua_State) &C.lua_Number {
+pub fn lua_version(L &C.lua_State) &Lua_Number {
 	return C.lua_version(L)
 }
 
@@ -517,7 +519,7 @@ pub fn lua_yield(L &C.lua_State, nresults int) int {
 }
 
 [inline]
-pub fn lua_yieldk(L &C.lua_State, nresults int, ctx C.lua_KContext, k fn(&C.lua_State, int, C.lua_KContext) int) int {
+pub fn lua_yieldk(L &C.lua_State, nresults int, ctx Lua_KContext, k fn(&C.lua_State, int, Lua_KContext) int) int {
 	return C.lua_yieldk(L, nresults, ctx, k)
 }
 
@@ -648,7 +650,7 @@ pub fn lual_checklstring(L &C.lua_State, arg int, lt &size_t) byteptr {
 }
 
 [inline]
-pub fn lual_checknumber(L &C.lua_State, arg int) C.lua_Number {
+pub fn lual_checknumber(L &C.lua_State, arg int) Lua_Number {
 	return C.luaL_checknumber(L, arg)
 }
 
@@ -791,7 +793,7 @@ pub fn lual_optlstring(L &C.lua_State, arg int, d byteptr, lt &size_t) byteptr {
 }
 
 [inline]
-pub fn lual_optnumber(L &C.lua_State, arg int, d C.lua_Number) C.lua_Number {
+pub fn lual_optnumber(L &C.lua_State, arg int, d Lua_Number) Lua_Number {
 	return C.luaL_optnumber(L, arg, d)
 }
 

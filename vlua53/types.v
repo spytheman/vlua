@@ -63,6 +63,9 @@ pub const (
 	LUA_MASKRET = 1 << LUA_HOOKRET
 	LUA_MASKLINE = 1 << LUA_HOOKLINE
 	LUA_MASKCOUNT = 1 << LUA_HOOKCOUNT
+
+    lua_idsize = 60
+    lual_buffersize = 8192
 )
 
 struct C.lua_State
@@ -85,7 +88,7 @@ pub:
 	nparams byte
 	isvararg byte
 	istailcall byte
-	short_src [LUA_IDSIZE]byte
+	short_src [60]byte
 	i_ci &C.CallInfo
 }
 
@@ -95,7 +98,7 @@ pub:
 	b byteptr
 	size u32
 	n u32
-	initb [LUAL_BUFFERSIZE]byte
+	initb [8192]byte
 }
 
 struct C.luaL_Reg {

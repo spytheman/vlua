@@ -1,11 +1,15 @@
 module vlua53
-
+                           
+type FNK fn(&C.lua_State, int, C.lua_KContext) int
+type Lua_KContext voidptr
+type Lua_Number f32
+                           
 //lua.h
 fn C.lua_absindex(L &C.lua_State, idx int) int
 fn C.lua_arith(L &C.lua_State, op int)
 fn C.lua_atpanic(L &C.lua_State, panicf fn(&C.lua_State) int) voidptr //lua_CFunction fn(&C.lua_State) int
-fn C.lua_call(L &C.lua_State, nargs, nresults int)
-fn C.lua_callk(L &C.lua_State, nargs, nresults, ctx C.lua_KContext, k fn(&C.lua_State, int, C.lua_KContext) int)
+fn C.lua_call(L &C.lua_State, nargs int, nresults int) void
+fn C.lua_callk(L &C.lua_State, nargs int, nresults int, ctx Lua_KContext, k FNK) void
 fn C.lua_checkstack(L &C.lua_State, n int) int
 fn C.lua_close(L &C.lua_State)
 fn C.lua_compare(L &C.lua_State, index1, index2, op int) int
@@ -46,9 +50,9 @@ fn C.lua_newtable(L &C.lua_State)
 fn C.lua_newthread(L &C.lua_State) &C.lua_State
 fn C.lua_newuserdata(L &C.lua_State, size size_t) voidptr
 fn C.lua_next(L &C.lua_State, index int) int
-fn C.lua_numbertointeger(n C.lua_Number, p &i64) int // importing C.lua_Integer has compile issues, i64
+fn C.lua_numbertointeger(n Lua_Number, p &i64) int // importing C.lua_Integer has compile issues, i64
 fn C.lua_pcall(L &C.lua_State, nargs, nresults, msgh int) int
-fn C.lua_pcallk (L &C.lua_State, nargs, nresults, msgh int, ctx C.lua_KContext, k fn(&C.lua_State, int, C.lua_KContext) int) int
+fn C.lua_pcallk (L &C.lua_State, nargs, nresults, msgh int, ctx Lua_KContext, k fn(&C.lua_State, int, Lua_KContext) int) int
 fn C.lua_pop(L &C.lua_State, n int)
 fn C.lua_pushboolean(L &C.lua_State, b int)
 fn C.lua_pushcclosure(L &C.lua_State, f fn(L &C.lua_State) int, n int)
@@ -60,7 +64,7 @@ fn C.lua_pushlightuserdata(L &C.lua_State, p voidptr)
 fn C.lua_pushliteral(L &C.lua_State, s byteptr) byteptr
 fn C.lua_pushlstring(L &C.lua_State, s byteptr, len size_t) byteptr
 fn C.lua_pushnil(L &C.lua_State)
-fn C.lua_pushnumber(L &C.lua_State, n C.lua_Number)
+fn C.lua_pushnumber(L &C.lua_State, n Lua_Number)
 fn C.lua_pushstring(L &C.lua_State, s byteptr) byteptr
 fn C.lua_pushthread(L &C.lua_State) int
 fn C.lua_pushvalue(L &C.lua_State, index int)
@@ -93,8 +97,8 @@ fn C.lua_tocfunction(L &C.lua_State, index int) voidptr // CFunction fn(L &C.lua
 fn C.lua_tointeger(L &C.lua_State, index int) i64 // importing C.lua_Integer has compile issues, i64
 fn C.lua_tointegerx(L &C.lua_State, index int, isnum &int) i64 // importing C.lua_Integer has compile issues, i64
 fn C.lua_tolstring(L &C.lua_State, index int, len &size_t) byteptr
-fn C.lua_tonumber(L &C.lua_State, index int) C.lua_Number
-fn C.lua_tonumberx(L &C.lua_State, index int, isnum &int) C.lua_Number
+fn C.lua_tonumber(L &C.lua_State, index int) Lua_Number
+fn C.lua_tonumberx(L &C.lua_State, index int, isnum &int) Lua_Number
 fn C.lua_topointer(L &C.lua_State, index int) voidptr
 fn C.lua_tostring(L &C.lua_State, index int) byteptr
 fn C.lua_tothread(L &C.lua_State, index int) &C.lua_State
@@ -102,10 +106,10 @@ fn C.lua_touserdata(L &C.lua_State, index int) voidptr
 fn C.lua_type(L &C.lua_State, index int) int
 fn C.lua_typename(L &C.lua_State, tp int) byteptr
 fn C.lua_upvalueindex(i int) int
-fn C.lua_version(L &C.lua_State) &C.lua_Number
+fn C.lua_version(L &C.lua_State) &Lua_Number
 fn C.lua_xmove(from &C.lua_State, to &C.lua_State, n int)
 fn C.lua_yield(L &C.lua_State, nresults int) int
-fn C.lua_yieldk(L &C.lua_State, nresults int, ctx C.lua_KContext, k fn(&C.lua_State, int, C.lua_KContext) int) int
+fn C.lua_yieldk(L &C.lua_State, nresults int, ctx Lua_KContext, k fn(&C.lua_State, int, Lua_KContext) int) int
 fn C.lua_gethook(L &C.lua_State) voidptr // lua_Hook fn(&C.lua_State, &C.lua_Debug)
 fn C.lua_gethookcount(L &C.lua_State) int
 fn C.lua_gethookmask(L &C.lua_State) int
@@ -133,7 +137,7 @@ fn C.luaL_callmeta(L &C.lua_State, obj int, e byteptr) int
 fn C.luaL_checkany(L &C.lua_State, arg int)
 fn C.luaL_checkinteger(L &C.lua_State, arg int) i64 // importing C.lua_Integer has compile issues, i64
 fn C.luaL_checklstring(L &C.lua_State, arg int, l &size_t) byteptr
-fn C.luaL_checknumber(L &C.lua_State, arg int) C.lua_Number
+fn C.luaL_checknumber(L &C.lua_State, arg int) Lua_Number
 fn C.luaL_checkoption(L &C.lua_State, arg int, def byteptr, lst byteptr) int
 fn C.luaL_checkstack(L &C.lua_State, sz int, msg byteptr)
 fn C.luaL_checkstring(L &C.lua_State, arg int) byteptr
@@ -163,7 +167,7 @@ fn C.luaL_openlibs(L &C.lua_State)
 //fn C.luaL_opt(L &C.lua_State, arg, d int) int not sure about translation
 fn C.luaL_optinteger(L &C.lua_State, arg int, d i64) i64 // importing C.lua_Integer has compile issues, i64
 fn C.luaL_optlstring(L &C.lua_State, arg int, d byteptr, l &size_t) byteptr
-fn C.luaL_optnumber(L &C.lua_State, arg int, d C.lua_Number) C.lua_Number
+fn C.luaL_optnumber(L &C.lua_State, arg int, d Lua_Number) Lua_Number
 fn C.luaL_optstring(L &C.lua_State, arg int, d byteptr) byteptr
 fn C.luaL_prepbuffer(B &C.luaL_Buffer) byteptr
 fn C.luaL_prepbuffsize(B &C.luaL_Buffer, sz size_t) byteptr
